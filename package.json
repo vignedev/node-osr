@@ -1,0 +1,28 @@
+{
+  "name": "node-osr",
+  "version": "1.0.0",
+  "description": "NodeJS library for serialization and deserialization of osu replay files",
+  "main": "index.js",
+  "scripts": {
+    "test":"echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "osu!",
+    "replay",
+    "osr"
+  ],
+  "author": "vignedev <vignedev@gmail.com>",
+  "license": "MIT",
+  "preferGlobal": true,
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "commander": "^2.9.0",
+    "imagesize": "^1.0.0",
+    "pdfkit": "^0.8.0",
+    "progress": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vignedev/node-osr.git"
+  }
+}
