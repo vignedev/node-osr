@@ -17,7 +17,7 @@ Download it from npm.
 `$ npm install node-osr`
 
 ## Documentation
-Examples will be added.
+Check out the [examples](../examples)
 
 Require node-osr
 `let osr = require('node-osr')`
