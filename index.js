@@ -95,7 +95,7 @@ function _serialize(data, cb){
 
 				return cb(err == 0 ? null : err,Buffer.concat([gameMode, gameVersion, beatmapMD5, playerName, replayMD5,
 					number_300s, number_100s, number_50s, gekis, katus, misses, score, max_combo, perfect_combo,
-					fmods, life_bar, timestamp, replay_length, replay_data, unknown]))
+					mods, life_bar, timestamp, replay_length, replay_data, unknown]))
 			})
 		}
 	}catch(err){
