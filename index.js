@@ -34,7 +34,16 @@ class Replay{
 	}
 
 	serialize(cb){
-		return _serialize(this, cb)
+		if(cb){
+			return _serialize(this, cb)
+		}else{
+			return new Promise((resolve,reject) => {
+				_serialize(this, (err,buffer) => {
+					if(err) return reject(err)
+					resolve(buffer)
+				})
+			})
+		}
 	}
 }
 
@@ -42,12 +51,31 @@ function readSync(input){
 	return _read((input instanceof Buffer) ? input : fs.readFileSync(input))
 }
 function read(input,cb){
-	if(input instanceof Buffer){
-		return _read(input,cb)
+	if(cb){
+		if(input instanceof Buffer){
+			return _read(input,cb)
+		}else{
+			fs.readFile(input, (err,data) => {
+				if(err) return cb(err, null)
+				return _read(data,cb)
+			})
+		}
 	}else{
-		fs.readFile(input, (err,data) => {
-			if(err) return cb(err, null)
-			return _read(data,cb)
+		return new Promise((resolve, reject) => {
+			if(input instanceof Buffer){
+				_read(input, (err,osr) => {
+					if(err) return reject(err)
+					resolve(osr)
+				})
+			}else{
+				fs.readFile(input, (err,data) => {
+					if(err) return reject(err)
+					_read(data, (err,osr) => {
+						if(err) return reject(err)
+						resolve(osr)
+					})
+				})
+			}
 		})
 	}
 }

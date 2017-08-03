@@ -1,10 +1,10 @@
 {
   "name": "node-osr",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "NodeJS library for serialization and deserialization of osu replay files",
   "main": "index.js",
   "scripts": {
-    "test":"echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "osu",

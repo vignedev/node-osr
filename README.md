@@ -9,6 +9,7 @@ NodeJS library for serialization and deserialization of osu replay files
 * Create new Replays
 * Save them in .osr
 * Synchronous and asynchronous 
+* Promise asynchronous functions
 
 ### Install
 
@@ -21,11 +22,15 @@ Check out the [examples](./examples)
 
 Require node-osr
 `let osr = require('node-osr')`
+
+#### osr.read([string | Buffer])
+Promise version of osr.read().
+
 #### osr.read([string | Buffer], (err, replay))
-Asynchronious version of osr.readSync.
+Asynchronious version of osr.readSync().
 
 #### osr.readSync([string | Buffer])
-Returns a Replay class with the input's data.
+Returns a Replay class with the input's data. 
 
 #### new osr.Replay()
 Creates a new blank Replay class.
@@ -53,6 +58,10 @@ Replay {
   unknown: 0
 }
 ```
+
+#### replay.serialize()
+Promise version of replay.serialize().
+
 #### replay.serialize((err, Buffer))
 Asynchronous version of replay.serializeSync().
 
