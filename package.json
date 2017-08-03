@@ -1,6 +1,6 @@
 {
   "name": "node-osr",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "NodeJS library for serialization and deserialization of osu replay files",
   "main": "index.js",
   "scripts": {
