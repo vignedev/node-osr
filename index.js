@@ -179,7 +179,17 @@ function _read(buff, cb){
 		replay.perfect_combo = readByte(buff)
 
 		replay.mods = readInteger(buff)
-		replay.life_bar = readString(buff,1)
+		replay.life_bar = readString(buff)
+		let lastChar = replay.life_bar[replay.life_bar.length-1]
+		//if(replay.life_bar != '' || replay.life_bar) offset++
+		// update on the bottom line, if it HAS life_bar, add a 0x01 offset
+		if(lastChar != ',' && !isNaN(parseInt(lastChar) && lastChar != '|')){ offset++ }	// sometimes it returns last char as rubbish, if it did, add +0x01 to offset. this is a shitty workaround, fix later
+		// update on the line above the line above me
+		// the 'if it has replay, add offset' works for most, but fails at some point, currently this seems to work with everything, but looks janky.
+
+		// filter out the characters that we don't need
+		// it interferes with string length reading in osu! (crashes the game)
+		replay.life_bar = replay.life_bar.match(/([0-9]|\||,|\.)*/g).join('')
 		replay.timestamp = new Date((readLong(buff)-EPOCH)/10000)
 		replay.replay_length = readInteger(buff)
 
@@ -218,12 +228,11 @@ function _read(buff, cb){
 		offset += 8;
 		return new int64.Uint64LE(buffer.slice(offset-8, offset)).toNumber();
 	}
-	function readString(buffer, additionalOffset = 0){
+	function readString(buffer){
 		if(buffer.readInt8(offset) == 0x0b){
 			offset++
 			let strLength = leb.decodeUInt32(buffer.slice(offset, offset+2)).value
-			if(strLength == 0) additionalOffset = 0	//workaround i guess
-			offset += strLength+1+additionalOffset
+			offset += strLength+1
 			return buffer.slice(offset-strLength, offset).toString()
 		}else{
 			offset++
@@ -232,11 +241,11 @@ function _read(buff, cb){
 	}
 	function readCompressed(buffer, length, cb){
 		offset += length
-		return lzma.decompress(buffer.slice(offset-length, offset), cb)
+		return length != 0 ? lzma.decompress(buffer.slice(offset-length, offset), cb) : cb(null,null)
 	}
 	function readCompressedSync(buffer, length){
 		offset += length
-		return lzma.decompress(buffer.slice(offset-length, offset))
+		return length != 0 ? lzma.decompress(buffer.slice(offset-length, offset)) : null
 	}
 }
 
