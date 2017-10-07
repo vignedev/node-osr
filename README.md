@@ -1,5 +1,5 @@
 # node-osr
-NodeJS library for serialization and deserialization of osu replay files
+NodeJS library for reading and writing osu replay files
 
 ---
 
@@ -15,7 +15,7 @@ NodeJS library for serialization and deserialization of osu replay files
 
 Download it from npm.
 
-`$ npm install node-osr`
+`$ npm install node-osr --save`
 
 ## Documentation
 Check out the [examples](./examples)
@@ -62,11 +62,20 @@ Replay {
 #### replay.serialize()
 Promise version of replay.serialize().
 
+#### replay.write(path(err, Buffer))
+Asynchronous version of replay.writeSync()
+
+#### replay.writeSync(path)
+Writes replay into a file specified by `path`
+
 #### replay.serialize((err, Buffer))
 Asynchronous version of replay.serializeSync().
 
 #### replay.serializeSync()
 Returns the Buffer of the replay.
+
+## Related libraries
+[osureplayparser](https://github.com/Swan/osuReplayParser) - Clearly formatted replay reading based on this library
 
 ## License
 MIT

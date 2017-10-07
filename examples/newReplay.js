@@ -15,5 +15,5 @@ replay.max_combo = 727
 // Simple motion, just to show that it works
 replay.replay_data = '0|0|0|0,1500|512|384|0'
 
-fs.writeFileSync('newReplay.osr', replay.serializeSync())
+replay.writeSync('newReplay.osr')
 console.log(' Finished ')

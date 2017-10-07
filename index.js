@@ -45,6 +45,25 @@ class Replay{
 			})
 		}
 	}
+
+	writeSync(path){
+		fs.writeFileSync(path, _serialize(this))
+	}
+	write(path, cb){
+		if(cb){
+			_serialize(this, (err,buffer) => {
+				if(err) return cb(err)
+				fs.writeFile(path, _serialize, cb)
+			})
+		}else{
+			return new Promise((resolve, reject) => {
+				_serialize(this, (err,buffer) => {
+					if(err) return reject(err)
+					fs.writeFile(path, buffer, resolve)
+				})
+			})
+		}
+	}
 }
 
 function readSync(input){
@@ -179,36 +198,34 @@ function _read(buff, cb){
 		replay.perfect_combo = readByte(buff)
 
 		replay.mods = readInteger(buff)
-		replay.life_bar = readString(buff)
-		let lastChar = replay.life_bar[replay.life_bar.length-1]
-		//if(replay.life_bar != '' || replay.life_bar) offset++
-		// update on the bottom line, if it HAS life_bar, add a 0x01 offset
-		if(lastChar != ',' && !isNaN(parseInt(lastChar) && lastChar != '|')){ offset++ }	// sometimes it returns last char as rubbish, if it did, add +0x01 to offset. this is a shitty workaround, fix later
-		// update on the line above the line above me
-		// the 'if it has replay, add offset' works for most, but fails at some point, currently this seems to work with everything, but looks janky.
 
-		// filter out the characters that we don't need
-		// it interferes with string length reading in osu! (crashes the game)
-		replay.life_bar = replay.life_bar.match(/([0-9]|\||,|\.)*/g).join('')
+		replay.life_bar = readString(buff)
 		replay.timestamp = new Date((readLong(buff)-EPOCH)/10000)
 		replay.replay_length = readInteger(buff)
 
 		if(typeof cb === 'undefined'){
-			replay.replay_data = readCompressedSync(buff, replay.replay_length)
+			if(replay.replay_length != 0)
+				replay.replay_data = readCompressedSync(buff, replay.replay_length)
 			replay.unknown = readLong(buff)
 			return replay
 		}else{
-			readCompressed(buff, replay.replay_length, (res, err) => {
-				replay.replay_data = res
+			if(replay.replay_length != 0){
+				readCompressed(buff, replay.replay_length, (res, err) => {
+					replay.replay_data = res
+					replay.unknown = readLong(buff)
+					if(err == 0) return cb(null, replay)
+					cb(err, null)
+				})
+			}else{
 				replay.unknown = readLong(buff)
-				cb(err == 0 ? null : err, replay)
-			})
+				cb(null, replay)
+			}
 		}
 	}catch(err){
 		if(typeof cb === 'undefined'){
 			throw err
 		}else{
-			return cb(err, null)
+			cb(err, null)
 		}
 	}
 
@@ -231,8 +248,9 @@ function _read(buff, cb){
 	function readString(buffer){
 		if(buffer.readInt8(offset) == 0x0b){
 			offset++
-			let strLength = leb.decodeUInt32(buffer.slice(offset, offset+2)).value
-			offset += strLength+1
+			let ulebString = leb.decodeUInt64(buffer.slice(offset, offset+8))
+			let strLength = ulebString.value
+			offset += strLength+ulebString.nextIndex
 			return buffer.slice(offset-strLength, offset).toString()
 		}else{
 			offset++
