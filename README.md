@@ -7,7 +7,7 @@ NodeJS library for reading and writing osu replay files
 
 * Load .osr replays
 * Create new Replays
-* Save them in .osr
+* Write them in .osr
 * Synchronous and asynchronous 
 * Promise asynchronous functions
 
