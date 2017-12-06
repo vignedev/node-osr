@@ -53,13 +53,16 @@ class Replay{
 		if(cb){
 			_serialize(this, (err,buffer) => {
 				if(err) return cb(err)
-				fs.writeFile(path, _serialize, cb)
+				fs.writeFile(path, buffer, cb)
 			})
 		}else{
 			return new Promise((resolve, reject) => {
 				_serialize(this, (err,buffer) => {
 					if(err) return reject(err)
-					fs.writeFile(path, buffer, resolve)
+					fs.writeFile(path, buffer, err => {
+						if(err) return reject(err)
+						resolve()
+					})
 				})
 			})
 		}
